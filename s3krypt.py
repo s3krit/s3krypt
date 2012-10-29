@@ -2,8 +2,6 @@
 from optparse import OptionParser
 
 def getmid(seed):
-    # TODO: This could probably be not as shitty
-    # It should probably take a larger chunk
     n = pow(seed,2)
     i = len(str(seed))/2-2
     return int(str(n)[i:i+4])
@@ -21,8 +19,8 @@ def getseed(string):
 def main():
     parser = OptionParser()
     parser.add_option("-k","--keyword",action="store",type="string",dest="keyword")
-    parser.add_option("-i","--input",action="store",type="string",dest="infile")
-    parser.add_option("-o","--output",action="store",type="string",dest="outfile")
+    parser.add_option("-i","--input",action="store",type="string",dest="infile",default="plaintext")
+    parser.add_option("-o","--output",action="store",type="string",dest="outfile",default="ciphertext")
     (options,args) = parser.parse_args()
     seed = pow(getseed(options.keyword),3)
     print seed
