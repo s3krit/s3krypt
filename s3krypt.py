@@ -1,10 +1,9 @@
 #!/usr/bin/python
 from optparse import OptionParser
-
 def getmid(seed):
     n = pow(seed,2)
     i = len(str(seed))/2-2
-    return int(str(n)[i:i+4])
+    return int(str(n)[i:i+4])+1000 # bit hacky. Must be >1000
 
 def getcipher(pt,key):
     # oh god how did I get here... python's weird
@@ -27,13 +26,14 @@ def main():
     ptf = open(options.infile,'r')
     cf = open(options.outfile,'w')
     plaintext = ptf.read()
+    plaintext=plaintext[::-1]
     ptf.close()
     key = ""
     while (len(key) < len(plaintext)):
         seed = getmid(seed)
         key+=chr(seed%256)
     ciphertext = getcipher(plaintext,key)
-    cf.write(ciphertext)
+    cf.write(ciphertext[::-1])
     cf.close()
 
 main()
