@@ -4,7 +4,7 @@ from optparse import OptionParser
 def getmid(seed):
     n = pow(seed,2)
     i = len(str(seed))/2-2
-    return int(str(n)[i:i+4])
+    return int(str(n)[i:i+6])
 
 def getcipher(pt,key):
     # oh god how did I get here... python's weird
@@ -22,6 +22,8 @@ def main():
     parser.add_option("-i","--input",action="store",type="string",dest="infile",default="plaintext")
     parser.add_option("-o","--output",action="store",type="string",dest="outfile",default="ciphertext")
     (options,args) = parser.parse_args()
+    if len(options.keyword:
+        return 0
     seed = pow(getseed(options.keyword),3)
     print seed
     ptf = open(options.infile,'r')
@@ -31,6 +33,7 @@ def main():
     key = ""
     while (len(key) < len(plaintext)):
         seed = getmid(seed)
+        print seed
         key+=chr(seed%256)
     ciphertext = getcipher(plaintext,key)
     cf.write(ciphertext)
