@@ -21,6 +21,8 @@ def main():
     parser.add_option("-i","--input",action="store",type="string",dest="infile",default="plaintext")
     parser.add_option("-o","--output",action="store",type="string",dest="outfile",default="ciphertext")
     (options,args) = parser.parse_args()
+    if len(options.keyword:
+        return 0
     seed = pow(getseed(options.keyword),3)
     ptf = open(options.infile,'r')
     cf = open(options.outfile,'w')
