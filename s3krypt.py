@@ -1,11 +1,12 @@
 #!/usr/bin/python
 from optparse import OptionParser
+from pprint import pprint
 def getmid(seed,e):
     n = pow(seed,e)
     i = len(str(seed))/2-2
     return int(str(n)[i:i+6])+1000 # bit hacky. Must be >1000
 
-def getcipher(pt,key):
+def xor(pt,key):
     # oh god how did I get here... python's weird
     return "".join([chr(a) for a in [ord(x)^ord(y) for x,y in zip(pt,key)]])
 
@@ -15,26 +16,59 @@ def getseed(string):
         seedtotal += ord(char)
     return seedtotal
 
+def permute(pt,key):
+    length = len(pt)
+    ptList = list(pt)
+    for i in range(length):
+        swapIndex = ord(key[i])%length
+        ptList[i],ptList[swapIndex] = ptList[swapIndex],ptList[i]
+    return"".join(ptList)
+
+def unpermute(pt,key):
+    length = len(pt)
+    ptList = list(pt)
+    for i in range(length-1,-1,-1):
+        swapIndex = ord(key[i])%length
+        ptList[i],ptList[swapIndex] = ptList[swapIndex],ptList[i]
+    return"".join(ptList)
+
 def main():
+##  Start option parser funtimes
     parser = OptionParser()
     parser.add_option("-k","--keyword",action="store",type="string",dest="keyword")
-    parser.add_option("-i","--input",action="store",type="string",dest="infile",default="plaintext")
-    parser.add_option("-o","--output",action="store",type="string",dest="outfile",default="ciphertext")
+    parser.add_option("-i","--input",action="store",type="string",dest="infile",default="input.txt")
+    parser.add_option("-o","--output",action="store",type="string",dest="outfile",default="output.txt")
+    parser.add_option("-d","--decrypt",action="store_true",dest="decrypt")
+    parser.add_option("-e","--encrypt",action="store_true",dest="encrypt")
     (options,args) = parser.parse_args()
-    if len(options.keyword:
-        return 0
+##  End option parser funtimes
+
+    if options.keyword == None:
+        print "ERROR: No keyword given"
+        exit(1)
+    if options.encrypt and options.decrypt or not(options.encrypt or options.decrypt):
+        print "ERROR: Pick either encrypt (-e) or decrypt (-d)"
+        exit(1)
     seed = pow(getseed(options.keyword),3)
-    ptf = open(options.infile,'r')
-    cf = open(options.outfile,'w')
-    plaintext = ptf.read()
-    plaintext=plaintext[::-1]
-    ptf.close()
+    infile = open(options.infile,'r')
+    outfile = open(options.outfile,'w')
+    stage0 = infile.read()
+    infile.close()
     key = ""
-    while (len(key) < len(plaintext)):
+    while (len(key) < len(stage0)):
         seed = getmid(seed,5)
         key+=chr(seed%256)
-    ciphertext = getcipher(plaintext,key)
-    cf.write(ciphertext[::-1])
-    cf.close()
+    if options.encrypt:
+        stage1 = permute(stage0,key)
+    else:
+        stage1 = stage0
+    stage2 = xor(stage1,key)
+    if options.decrypt:
+        stage3 = unpermute(stage2,key)
+    else:
+        stage3 = stage2
+    outfile.write(stage3)
+    outfile.close()
+    exit(0)
 
 main()
