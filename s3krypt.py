@@ -3,7 +3,7 @@ from optparse import OptionParser
 from pprint import pprint
 def getmid(seed,e):
     n = pow(seed,e)
-    i = len(str(seed))/2-2
+    i = int(len(str(seed))/2-2)
     return int(str(n)[i:i+6])+1000 # bit hacky. Must be >1000
 
 def xor(pt,key):
@@ -44,10 +44,10 @@ def main():
 ##  End option parser funtimes
 
     if options.keyword == None:
-        print "ERROR: No keyword given"
+        print("ERROR: No keyword given")
         exit(1)
     if options.encrypt and options.decrypt or not(options.encrypt or options.decrypt):
-        print "ERROR: Pick either encrypt (-e) or decrypt (-d)"
+        print("ERROR: Pick either encrypt (-e) or decrypt (-d)")
         exit(1)
     seed = pow(getseed(options.keyword),3)
     infile = open(options.infile,'r')
@@ -57,7 +57,7 @@ def main():
     key = ""
     while (len(key) < len(stage0)):
         seed = getmid(seed,5)
-        key+=chr(seed%256)
+        key+=chr(seed%128)
     if options.encrypt:
         stage1 = permute(stage0,key)
     else:
