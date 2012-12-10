@@ -1,9 +1,10 @@
 #!/usr/bin/python
 from optparse import OptionParser
 from pprint import pprint
+from math import floor
 def getmid(seed,e):
     n = pow(seed,e)
-    i = int(len(str(seed))/2-2)
+    i = int(floor(len(str(n))/2-3))
     return int(str(n)[i:i+6])+1000 # bit hacky. Must be >1000
 
 def xor(pt,key):
@@ -50,13 +51,13 @@ def main():
         print("ERROR: Pick either encrypt (-e) or decrypt (-d)")
         exit(1)
     seed = pow(getseed(options.keyword),3)
-    infile = open(options.infile,'r')
-    outfile = open(options.outfile,'w')
-    stage0 = infile.read()
+    infile = open(options.infile,'rb')
+    outfile = open(options.outfile,'wb')
+    stage0 = bytes.decode(infile.read())
     infile.close()
     key = ""
     while (len(key) < len(stage0)):
-        seed = getmid(seed,5)
+        seed = getmid(seed,7)
         key+=chr(seed%128)
     if options.encrypt:
         stage1 = permute(stage0,key)
@@ -67,7 +68,7 @@ def main():
         stage3 = unpermute(stage2,key)
     else:
         stage3 = stage2
-    outfile.write(stage3)
+    outfile.write(str.encode(stage3))
     outfile.close()
     exit(0)
 
