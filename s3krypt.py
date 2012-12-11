@@ -1,11 +1,9 @@
-#!/usr/bin/python
 from optparse import OptionParser
 from pprint import pprint
 from math import floor
 def getmid(seed,e):
     n = pow(seed,e)
-    i = int(floor(len(str(n))/2-3))
-    return int(str(n)[i:i+6])+1000 # bit hacky. Must be >1000
+    return int(str(n)[4:15])+1000
 
 def xor(pt,key):
     # oh god how did I get here... python's weird
@@ -57,7 +55,8 @@ def main():
     infile.close()
     key = ""
     while (len(key) < len(stage0)):
-        seed = getmid(seed,7)
+        seed = getmid(seed,2)
+        print(seed)
         key+=chr(seed%128)
     if options.encrypt:
         stage1 = permute(stage0,key)
